@@ -27,7 +27,7 @@ app.use(
 
 app.set("view engine", "ejs");
 
-const urlDatabase = {
+let urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
@@ -71,9 +71,19 @@ app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
 
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
+});
+
 app.post("/urls", (req, res) => {
-  console.log(req.body); // Log the POST request body to the console
-  res.send("Ok"); // Respond with 'Ok' (we will replace this)
+  console.log(req.body.longURL); // Log the POST request body to the console
+  const shortURL = generateRandomString();
+  // res.send("ok");
+  longURL = req.body.longURL;
+  res.redirect(`/urls/${shortURL}`);
+  urlDatabase[shortURL] = `${longURL}`;
+  // shortURL: longURL
 });
 
 app.use(express.static("public"));
