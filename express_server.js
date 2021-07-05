@@ -4,7 +4,7 @@ const PORT = 8080; // default port 8080
 
 app.set("view engine", "ejs");
 
-app.use(express.static("public"));
+// app.use(express.static("public"));
 
 const urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
@@ -45,3 +45,5 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/hello", (req, res) => {
   res.send("<html><body>Hello <b>World</b></body></html>\n");
 });
+
+app.use(express.static("public"));

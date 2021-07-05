@@ -1,9 +1,11 @@
-/* URLS INDEX */
-body.urls {
-  background-color: rgba(255, 230, 247, 0.932);
+/* div.card.text-center {
+  background-color: aqua !important;
 }
 
-/* URLS SHOWS (Short to Long */
-body.urlsShow {
-  background-color: rgb(137, 252, 194);
+div.card-header {
+  background-color: rgba(255, 230, 247, 0.932) !important;
 }
+
+.card-body {
+  background: lime !important;
+} */
