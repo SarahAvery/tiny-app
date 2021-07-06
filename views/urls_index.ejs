@@ -26,6 +26,7 @@
             <th scope="col">Short URL</th>
             <th scope="col">Long URL</th>
             <th scope="col">Delete</th>
+            <th scope="col">Edit</th>
           </tr>
         </thead>
         <tbody>
@@ -36,11 +37,14 @@
             <td>
               <form method="POST" action="/urls/<%= url %>/delete">
                 <button
+                  class="btn"
                   style="
-                    border: 1px solid red;
+                    border: 1.5px solid red;
                     color: red;
                     border-radius: 4px;
                     outline: none;
+                    background: #fff;
+                    padding: 6px 12px;
                   "
                   class="delete-btn"
                   name="delete"
@@ -49,6 +53,23 @@
                   Delete
                 </button>
               </form>
+            </td>
+            <td>
+              <a
+                class="btn"
+                style="
+                  color: #007bff;
+                  background: #fff;
+                  border: 1.5px solid #007bff;
+                  border-radius: 4px;
+                  text-align: center;
+                  vertical-align: center;
+                  padding: 6px 12px;
+                  text-decoration: none;
+                "
+                href="/urls/<%= url %>"
+                >Edit Link</a
+              >
             </td>
           </tr>
           <% } %>

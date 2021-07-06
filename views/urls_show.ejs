@@ -27,6 +27,41 @@
         </p>
       </div>
       <div class="card-footer text-muted"></div>
+      <form action="/urls/<%= shortURL %>" method="POST">
+        <div
+          style="
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+            padding-top: 20px;
+          "
+        >
+          <label style="width: 100%" for="longURL">Update URL:</label>
+          <input
+            class="form-control"
+            type="text"
+            name="longURL"
+            placeholder="http://"
+            style="width: 300px; margin: 1em"
+          />
+          <button
+            type="submit"
+            class="btn"
+            style="
+              color: #fff;
+              background: #007bff;
+              border-radius: 4px;
+              text-align: center;
+              vertical-align: center;
+              padding: 6px 12px;
+              text-decoration: none;
+            "
+          >
+            Update
+          </button>
+        </div>
+      </form>
     </div>
     <!-- Bootstrap JS -->
     <script
