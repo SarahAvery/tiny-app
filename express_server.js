@@ -86,4 +86,10 @@ app.post("/urls", (req, res) => {
   // shortURL: longURL
 });
 
+app.post("/urls/:shortURL/delete", (req, res) => {
+  const shortURL = req.params.shortURL;
+  delete urlDatabase[shortURL];
+  res.redirect("/urls");
+});
+
 app.use(express.static("public"));
