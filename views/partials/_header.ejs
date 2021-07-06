@@ -19,28 +19,7 @@
       </div>
     </div>
 
-    <% if(!username) { %>
-    <div class="form-inline">
-      <form action="/login" method="POST" class="form-inline">
-        <!-- <label for="username" class="navbar-brand">Username:</label> -->
-        <input
-          class="form-control"
-          type="text"
-          name="username"
-          placeholder="Username"
-          style="outline: none; border-radius: 4px"
-        />
-        <button
-          class="btn btn-outline-secondary"
-          name="login"
-          type="submit"
-          style="margin-left: 16px"
-        >
-          Login
-        </button>
-      </form>
-    </div>
-    <% } else { %>
+    <% if(username) { %>
     <div class="form-inline">
       <form action="/logout" method="POST" class="form-inline">
         <label for="username" class="navbar-brand"
@@ -56,6 +35,27 @@
           style="margin-left: 16px"
         >
           Logout
+        </button>
+      </form>
+    </div>
+    <% } else { %>
+
+    <div class="form-inline">
+      <form action="/login" method="POST" class="form-inline">
+        <input
+          class="form-control"
+          type="text"
+          name="username"
+          placeholder="Username"
+          style="outline: none; border-radius: 4px"
+        />
+        <button
+          class="btn btn-outline-secondary"
+          name="login"
+          type="submit"
+          style="margin-left: 16px"
+        >
+          Login
         </button>
       </form>
     </div>
