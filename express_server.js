@@ -26,12 +26,14 @@ app.listen(PORT, () => {
 
 //
 //............Middleware
+const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 app.use(
   bodyParser.urlencoded({
     extended: true
   })
 );
+app.use(cookieParser());
 
 // app.use(express.urlencoded());
 
@@ -62,7 +64,7 @@ app.get("/shortURL.json", (req, res) => {
 //
 //............TEMPLATES............//
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase };
+  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
 
@@ -73,7 +75,8 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   const templateVars = {
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
+    longURL: urlDatabase[req.params.shortURL],
+    username: req.cookies["username"]
   };
   res.render("urls_show", templateVars);
 });
@@ -106,5 +109,23 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 //............Edit and Update URL
 app.post("/urls/:shortURL", (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.longURL;
+  res.redirect("/urls");
+});
+
+//
+//............Login Username
+app.post("/login", (req, res) => {
+  const username = req.body.username;
+  res.cookie("username", username);
+  console.log(username);
+  res.redirect("/urls");
+});
+
+//
+//............Logout Username
+app.post("/logout", (req, res) => {
+  // clear username
+  const username = req.body.username;
+  res.clearCookie("username", username);
   res.redirect("/urls");
 });
