@@ -16,7 +16,7 @@ function generateRandomString() {
 //............SETUP............//
 const express = require("express");
 const app = express();
-const PORT = 8080; // default port 8080
+const PORT = process.env.PORT || 8080; // default port 8080
 
 app.set("view engine", "ejs");
 
@@ -42,11 +42,43 @@ app.use(cookieParser());
 // app.use(express.static("public"));
 
 //
-//............DATABASE............//
+//............DATABASES............//
 let urlDatabase = {
   b2xVn2: "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+let users = {
+  hThLlS: {
+    id: "hThLlS",
+    email: "awd@awd",
+    password: "awd"
+  }
+};
+
+// "userRandomID": {
+//   id: "userRandomID",
+//   email: "user@example.com",
+//   password: "purple-monkey-dinosaur"
+// },
+// "user2RandomID": {
+//   id: "user2RandomID",
+//   email: "user2@example.com",
+//   password: "dishwasher-funk"
+// }
+
+function getUserById(userId) {
+  return users[userId];
+}
+
+function isDuplicateEmail(email) {
+  return Object.keys(users).some((key) => users[key].email === email);
+}
+
+function getUserByEmail(email) {
+  const keyMatch = Object.keys(users).find((key) => users[key].email === email);
+  return keyMatch ? users[keyMatch] : null;
+}
 
 //--------------------------------//
 app.get("/", (req, res) => {
@@ -64,28 +96,43 @@ app.get("/shortURL.json", (req, res) => {
 //
 //............TEMPLATES............//
 app.get("/urls", (req, res) => {
-  const templateVars = { urls: urlDatabase, username: req.cookies["username"] };
+  const user = getUserById(req.cookies.user_id);
+  const templateVars = { urls: urlDatabase, user };
+  console.log(users);
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  const user = getUserById(req.cookies.user_id);
+  const templateVars = { user };
+  res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  const user = getUserById(req.cookies.user_id);
   const templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL],
-    username: req.cookies["username"]
+    user
   };
   res.render("urls_show", templateVars);
 });
 
-//--------------------------------//
-
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   res.redirect(longURL);
+});
+
+app.get("/register", (req, res) => {
+  const user = getUserById(req.cookies.user_id);
+  const templateVars = { user };
+  res.render("register", templateVars);
+});
+
+app.get("/login", (req, res) => {
+  const user = getUserById(req.cookies.user_id);
+  const templateVars = { user };
+  res.render("login", templateVars);
 });
 
 //
@@ -115,17 +162,48 @@ app.post("/urls/:shortURL", (req, res) => {
 //
 //............Login Username
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie("username", username);
-  console.log(username);
+  const user = getUserByEmail(req.body.email);
+
+  // error
+  if (!user) res.status(403).send("Email Not Found");
+  // error
+  if (user.password !== req.body.password) {
+    res.status(403).send(`Incorrect Password`);
+  }
+
+  // success
+  res.cookie("user_id", user.id);
   res.redirect("/urls");
+  res.end();
 });
 
 //
 //............Logout Username
 app.post("/logout", (req, res) => {
-  // clear username
-  const username = req.body.username;
-  res.clearCookie("username", username);
+  res.clearCookie("user_id");
   res.redirect("/urls");
+});
+
+//
+//............Registration
+app.post("/register", (req, res) => {
+  const userId = generateRandomString();
+  const email = req.body.email;
+  const password = req.body.password;
+  console.log(users);
+
+  console.log(req.body.email, req.body.password);
+
+  if (!email || !password) {
+    res.status(400).send(`You need to provide an Email and Password.`);
+  }
+  if (isDuplicateEmail(email)) {
+    res.status(400).send(`That Email Address has already been registered.`);
+  } else {
+    const user = { id: userId, email: email, password: password };
+    users[userId] = user;
+
+    res.cookie("user_id", userId);
+    res.redirect("/urls");
+  }
 });
