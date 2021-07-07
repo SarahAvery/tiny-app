@@ -164,13 +164,17 @@ app.post("/urls/:shortURL", (req, res) => {
 app.post("/login", (req, res) => {
   const user = getUserByEmail(req.body.email);
 
-  if (user) {
-    res.cookie("user_id", user.id);
-    res.redirect("/urls");
-    res.end();
+  // error
+  if (!user) res.status(403).send("Email Not Found");
+  // error
+  if (user.password !== req.body.password) {
+    res.status(403).send(`Incorrect Password`);
   }
 
-  res.status(400).send("user not found");
+  // success
+  res.cookie("user_id", user.id);
+  res.redirect("/urls");
+  res.end();
 });
 
 //
