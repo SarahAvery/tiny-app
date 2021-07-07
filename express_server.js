@@ -71,6 +71,10 @@ function getUserById(userId) {
   return users[userId];
 }
 
+function isDuplicateEmail(email) {
+  return Object.keys(users).some((key) => users[key].email === email);
+}
+
 //--------------------------------//
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -167,11 +171,20 @@ app.post("/register", (req, res) => {
   const userId = generateRandomString();
   const email = req.body.email;
   const password = req.body.password;
-
-  const user = { id: userId, email: email, password: password };
-  users[userId] = user;
-
-  res.cookie("user_id", userId);
   console.log(users);
-  res.redirect("/urls");
+
+  console.log(req.body.email, req.body.password);
+
+  if (!email || !password) {
+    res.status(400).send(`You need to provide an Email and Password.`);
+  }
+  if (isDuplicateEmail(email)) {
+    res.status(400).send(`That Email Address has already been registered.`);
+  } else {
+    const user = { id: userId, email: email, password: password };
+    users[userId] = user;
+
+    res.cookie("user_id", userId);
+    res.redirect("/urls");
+  }
 });
