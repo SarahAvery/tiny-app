@@ -1,16 +1,13 @@
 //
-//............Random string for new URLs
-function generateRandomString() {
-  const randomChars =
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
-  for (let i = 0; i < 6; i++) {
-    result += randomChars.charAt(
-      Math.floor(Math.random() * randomChars.length)
-    );
-  }
-  return result;
-}
+//............Requires
+const {
+  getUserByEmail,
+  generateRandomString,
+  getUserById,
+  isDuplicateEmail,
+  getClientUrls,
+  checkPasswordValidity
+} = require("./helpers");
 
 //
 //............SETUP............//
@@ -65,40 +62,6 @@ let users = {
   }
 };
 
-//........Get the user by ID
-function getUserById(userId) {
-  return users[userId];
-}
-//........Check if email is already in the DB
-function isDuplicateEmail(email) {
-  return Object.keys(users).some((key) => users[key].email === email);
-}
-
-//........Get the user by email address
-function getUserByEmail(email) {
-  const keyMatch = Object.keys(users).find((key) => users[key].email === email);
-  return keyMatch ? users[keyMatch] : null;
-}
-
-//........Return the users URLS
-function getClientUrls(urlDatabase, userID) {
-  let userObj = {};
-  for (let key in urlDatabase) {
-    if (urlDatabase[key].userID === userID) {
-      userObj[key] = urlDatabase[key];
-    }
-  }
-  return userObj;
-}
-
-//........Validate Password and Email
-function checkPasswordValidity(userPass, loginPass) {
-  //
-  if (bcrypt.compareSync(loginPass, userPass)) {
-    return true;
-  }
-}
-
 //--------------------------------//
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -115,7 +78,7 @@ app.get("/shortURL.json", (req, res) => {
 //
 //............TEMPLATES............//
 app.get("/urls", (req, res) => {
-  const user = getUserById(req.session.user_id);
+  const user = getUserById(req.session.user_id, users);
   if (user) {
     const templateVars = { urls: getClientUrls(urlDatabase, user.id), user };
     res.render("urls_index", templateVars);
@@ -125,7 +88,7 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const user = getUserById(req.session.user_id);
+  const user = getUserById(req.session.user_id, users);
   if (user) {
     const templateVars = { user };
     res.render("urls_new", templateVars);
@@ -135,7 +98,7 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const user = getUserById(req.session.user_id);
+  const user = getUserById(req.session.user_id, users);
 
   if (user) {
     const shortURL = req.params.shortURL;
@@ -157,13 +120,13 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/register", (req, res) => {
-  const user = getUserById(req.session.user_id);
+  const user = getUserById(req.session.user_id, users);
   const templateVars = { user };
   res.render("register", templateVars);
 });
 
 app.get("/login", (req, res) => {
-  const user = getUserById(req.session.user_id);
+  const user = getUserById(req.session.user_id, users);
   const templateVars = { user };
   res.render("login", templateVars);
 });
@@ -214,7 +177,7 @@ app.post("/urls/:shortURL", (req, res) => {
 //
 //............Login Username
 app.post("/login", (req, res) => {
-  const user = getUserByEmail(req.body.email); // returns user
+  const user = getUserByEmail(req.body.email, users); // returns user
   const loginPass = req.body.password; // pass entered on login
   const passwordValid = checkPasswordValidity(user.password, loginPass);
   // error
@@ -245,7 +208,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     res.status(400).send(`You need to provide an Email and Password.`);
   }
-  if (isDuplicateEmail(email)) {
+  if (isDuplicateEmail(email, users)) {
     res.status(400).send(`That Email Address has already been registered.`);
   } else {
     users[userId] = {
