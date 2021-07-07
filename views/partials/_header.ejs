@@ -41,23 +41,30 @@
     <% } else { %>
 
     <div class="form-inline">
-      <form action="/login" method="POST" class="form-inline">
-        <input
-          class="form-control"
-          type="text"
-          name="username"
-          placeholder="Username"
-          style="outline: none; border-radius: 4px"
-        />
+      <a href="/register">
         <button
-          class="btn btn-outline-secondary"
+          class="btn btn-primary"
           name="login"
           type="submit"
           style="margin-left: 16px"
         >
+          Register
+        </button></a
+      >
+      <a href="/login">
+        <button
+          class="btn btn-primary"
+          name="login"
+          type="submit"
+          style="
+            margin-left: 16px;
+            background-color: #f85e37;
+            border-color: #f85e37;
+          "
+        >
           Login
-        </button>
-      </form>
+        </button></a
+      >
     </div>
     <% } %>
   </nav>

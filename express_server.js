@@ -75,6 +75,11 @@ function isDuplicateEmail(email) {
   return Object.keys(users).some((key) => users[key].email === email);
 }
 
+function getUserByEmail(email) {
+  const keyMatch = Object.keys(users).find((key) => users[key].email === email);
+  return keyMatch ? users[keyMatch] : null;
+}
+
 //--------------------------------//
 app.get("/", (req, res) => {
   res.send("Hello!");
@@ -124,6 +129,12 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
+app.get("/login", (req, res) => {
+  const user = getUserById(req.cookies.user_id);
+  const templateVars = { user };
+  res.render("login", templateVars);
+});
+
 //
 //............Generate randome string, add to database
 app.post("/urls", (req, res) => {
@@ -151,17 +162,21 @@ app.post("/urls/:shortURL", (req, res) => {
 //
 //............Login Username
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie("username", username);
-  res.redirect("/urls");
+  const user = getUserByEmail(req.body.email);
+
+  if (user) {
+    res.cookie("user_id", user.id);
+    res.redirect("/urls");
+    res.end();
+  }
+
+  res.status(400).send("user not found");
 });
 
 //
 //............Logout Username
 app.post("/logout", (req, res) => {
-  // clear username
-  const username = req.body.username;
-  res.clearCookie("username", username);
+  res.clearCookie("user_id");
   res.redirect("/urls");
 });
 
