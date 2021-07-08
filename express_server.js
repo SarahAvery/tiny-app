@@ -38,8 +38,6 @@ app.use(
   })
 );
 
-// app.use(express.urlencoded());
-
 //
 //............DATABASES............//
 let urlDatabase = {
