@@ -20,6 +20,13 @@
     <main style="margin: 1em">
       <form action="/login" method="POST">
         <h3 class="form-inline">Login</h3>
+        <%= locals.some %> <% if (typeof error !== 'undefined') { %>
+        <p>
+          <span style="color: red; font-weight: bolder; font-size: 18px"
+            ><%= error %></span
+          >
+        </p>
+        <% } %>
         <div style="margin-top: 20px">
           <label for="email">Email:</label>
           <input

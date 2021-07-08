@@ -177,14 +177,18 @@ app.post("/urls/:shortURL", (req, res) => {
 //
 //............Login Username
 app.post("/login", (req, res) => {
+  const errors = { email: "Email Not Found", password: `Incorrect Password` };
   const user = getUserByEmail(req.body.email, users); // returns user
   const loginPass = req.body.password; // pass entered on login
+  // error
+  if (!user) {
+    res.status(403).render("login", { error: errors.email });
+  }
+
   const passwordValid = checkPasswordValidity(user.password, loginPass);
   // error
-  if (!user) res.status(403).send("Email Not Found");
-  // error
-  if (!passwordValid) {
-    res.status(403).send(`Incorrect Password`);
+  if (!passwordValid || passwordValid === undefined) {
+    res.status(403).render("login", { error: errors.password });
   } else {
     // success
     req.session.user_id = user.id;

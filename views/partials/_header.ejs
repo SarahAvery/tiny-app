@@ -19,7 +19,7 @@
       </div>
     </div>
 
-    <% if(user) { %>
+    <% if(typeof user !== 'undefined') { %>
     <div class="form-inline">
       <form action="/logout" method="POST" class="form-inline">
         <label for="user" class="navbar-brand"
