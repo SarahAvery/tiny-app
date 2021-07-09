@@ -8,7 +8,7 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 !["screenshot description"](https://github.com/SarahAvery/tiny-app/blob/main/docs/tinyapp-loging.png?raw=true)
 
-!["screenshot description"](https://github.com/SarahAvery/tiny-app/blob/main/docs/tinyapp-loging.png?raw=true)
+!["screenshot description"](https://github.com/SarahAvery/tiny-app/blob/main/docs/create-url.png?raw=true)
 
 ## Dependencies
 
@@ -26,3 +26,4 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 - Install all dependencies (using the `npm install` command).
 - Run the development web server using the `npm start` command.
+- Set by default to run on localhost:8080
