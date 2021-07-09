@@ -8,15 +8,19 @@ TinyApp is a full stack web application built with Node and Express that allows 
 
 !["screenshot description"](https://github.com/SarahAvery/tiny-app/blob/main/docs/tinyapp-loging.png?raw=true)
 
+!["screenshot description"](https://github.com/SarahAvery/tiny-app/blob/main/docs/tinyapp-loging.png?raw=true)
+
 ## Dependencies
 
 - Node.js
 - Express
 - EJS
 - bcrypt
-- @mapbox/node-pre-gyp
+- @mapbox/node-pre-gyp,
+- node-gyp
 - body-parser
 - cookie-session
+- nodemon
 
 ## Getting Started
 

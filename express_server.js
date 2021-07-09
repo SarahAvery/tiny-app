@@ -65,14 +65,6 @@ app.get("/", (req, res) => {
   res.send("Hello!");
 });
 
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
-app.get("/shortURL.json", (req, res) => {
-  res.json(urlDatabase);
-});
-
 //
 //............TEMPLATES............//
 app.get("/urls", (req, res) => {
