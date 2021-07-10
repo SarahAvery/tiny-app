@@ -11,7 +11,7 @@ const {
 
 const express = require("express");
 const app = express();
-const PORT = process.env.PORT || 8080; // default port 8080
+const PORT = process.env.PORT || 8080;
 const bcrypt = require("bcrypt");
 
 app.set("view engine", "ejs");
@@ -32,23 +32,9 @@ app.use(
 );
 
 //............Databases............//
-const urlDatabase = {
-  b2xVn2: { longURL: "http://www.lighthouselabs.ca", userID: "hThLlS" },
-  "9sm5xK": { longURL: "http://www.google.com", userID: "jsafiu" }
-};
+const urlDatabase = {};
 
-const users = {
-  hThLlS: {
-    id: "hThLlS",
-    email: "awd@awd",
-    password: "purple-monkey-dinosaur"
-  },
-  jsafiu: {
-    id: "jsafiu",
-    email: "a@a",
-    password: "orange-monkey-dinosaur"
-  }
-};
+const users = {};
 
 //............Get Requests............//
 app.get("/", (req, res) => {
@@ -63,6 +49,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   const errors = { login: "Please login or register first." };
   const user = getUserById(req.session.user_id, users);
+
   if (user) {
     const userDB = getClientUrls(urlDatabase, user.id);
     const templateVars = { urls: userDB, user };
@@ -86,7 +73,6 @@ app.get("/urls/:shortURL", (req, res) => {
   const user = getUserById(req.session.user_id, users);
   const userDB = getClientUrls(urlDatabase, user.id);
   const shortURL = req.params.shortURL;
-  console.log(userDB);
 
   if (!userDB[shortURL] || !user) {
     res.status(404).send("Access Denied.");
@@ -137,11 +123,10 @@ app.get("/login", (req, res) => {
 
 //............Generate randome string, add to database
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
-  const userID = req.session.user_id;
-
-  if (userID && userID === urlDatabase[shortURL].userID) {
-    longURL = req.body.longURL;
+  const userID = getUserById(req.session.user_id, users).id;
+  const longURL = req.body.longURL;
+  if (userID) {
+    const shortURL = generateRandomString();
     urlDatabase[shortURL] = {
       longURL,
       userID
