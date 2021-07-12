@@ -7,8 +7,6 @@ const {
   checkPasswordValidity
 } = require("./helpers");
 
-//............Setup............//
-
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -16,7 +14,6 @@ const bcrypt = require("bcrypt");
 
 app.set("view engine", "ejs");
 
-//............Middleware
 const cookieSession = require("cookie-session");
 const bodyParser = require("body-parser");
 app.use(
@@ -31,12 +28,10 @@ app.use(
   })
 );
 
-//............Databases............//
 const urlDatabase = {};
 
 const users = {};
 
-//............Get Requests............//
 app.get("/", (req, res) => {
   const user = getUserById(req.session.user_id, users);
   if (user) {
@@ -71,18 +66,28 @@ app.get("/urls/new", (req, res) => {
 
 app.get("/urls/:shortURL", (req, res) => {
   const user = getUserById(req.session.user_id, users);
-  const userDB = getClientUrls(urlDatabase, user.id);
   const shortURL = req.params.shortURL;
+  const errors = {
+    nonexist: "This URL does not exist.",
+    unauth: "You do not have authorization to this URL."
+  };
 
-  if (!userDB[shortURL] || !user) {
-    res.status(404).send("Access Denied.");
-  } else if (user) {
+  if (!user || !user.id) {
+    res.redirect("/login");
+  }
+  const userDB = getClientUrls(urlDatabase, user.id);
+
+  if (user && userDB[shortURL]) {
     const templateVars = {
       shortURL,
       longURL: urlDatabase[shortURL].longURL,
       user
     };
     res.render("urls_show", templateVars);
+  } else if (user && !userDB[shortURL]) {
+    res.status(404).send(errors.nonexist);
+  } else if (!user || !userDB[shortURL]) {
+    res.status(404).send(errors.unauth);
   }
 });
 
@@ -119,9 +124,6 @@ app.get("/login", (req, res) => {
   }
 });
 
-//............Post Requests............//
-
-//............Generate randome string, add to database
 app.post("/urls", (req, res) => {
   const userID = getUserById(req.session.user_id, users).id;
   const longURL = req.body.longURL;
@@ -138,7 +140,6 @@ app.post("/urls", (req, res) => {
   }
 });
 
-//............Delete URL
 app.post("/urls/:shortURL/delete", (req, res) => {
   const userID = req.session.user_id;
   const shortURL = req.params.shortURL;
@@ -150,7 +151,6 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   }
 });
 
-//............Edit and Update URL
 app.post("/urls/:shortURL", (req, res) => {
   const userID = req.session.user_id;
   const shortURL = req.params.shortURL;
@@ -163,7 +163,6 @@ app.post("/urls/:shortURL", (req, res) => {
   }
 });
 
-//............Login Username
 app.post("/login", (req, res) => {
   const errors = { email: "Email Not Found", password: `Incorrect Password` };
   const user = getUserByEmail(req.body.email, users);
@@ -181,13 +180,11 @@ app.post("/login", (req, res) => {
   }
 });
 
-//............Logout Username
 app.post("/logout", (req, res) => {
   req.session = null;
   res.redirect("/urls");
 });
 
-//............Registration
 app.post("/register", (req, res) => {
   const userId = generateRandomString();
   const { email, password } = req.body;
@@ -212,7 +209,6 @@ app.post("/register", (req, res) => {
   }
 });
 
-//............Listen
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
